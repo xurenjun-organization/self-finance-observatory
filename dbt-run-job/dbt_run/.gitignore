@@ -3,3 +3,7 @@ target/
 dbt_packages/
 logs/
 keyfile.json
+
+# ローカル環境変数
+.env
+.envrc
