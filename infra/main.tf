@@ -1,3 +1,10 @@
+# Terraformバックエンド用GCSバケット作成
+module "backend" {
+  source   = "./modules/backend"
+  project  = var.project
+  location = var.region
+}
+
 # GCS作成
 module "gcs" {
   source = "./modules/gcs"
