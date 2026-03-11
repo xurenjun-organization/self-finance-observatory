@@ -8,8 +8,8 @@ sources:
       - name: gcs_raw_rakuten
         external:
           location: "{{ env_var('GCS_BUCKET_URL') }}/raw/rakuten/*.csv"
-          file_format: csv
           options:
+            format: CSV
             skip_leading_rows: 1
             field_delimiter: ","
             quote: '"'

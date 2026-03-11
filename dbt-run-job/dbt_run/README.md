@@ -8,9 +8,37 @@ self-finance-observatoryのdbtプロジェクトです。
 |---|---|---|
 | `GCS_BUCKET_URL` | 外部テーブルが参照するGCSバケットURL | `gs://your-bucket-name` |
 
-## ローカル開発での設定方法
+## ローカル開発セットアップ
 
-### 1. `.env` ファイルを作成
+### 1. 依存パッケージのインストール
+
+```bash
+cd dbt-run-job
+uv sync
+```
+
+### 2. `~/.dbt/profiles.yml` を作成
+
+```yaml
+dbt_run:
+  target: dev
+  outputs:
+    dev:
+      type: bigquery
+      method: oauth
+      project: self-finance-observatory
+      dataset: cleaned
+      location: asia-northeast1
+      threads: 4
+```
+
+### 3. GCP認証
+
+```bash
+gcloud auth application-default login
+```
+
+### 4. `.env` ファイルを作成
 
 ```bash
 cp .env.example .env
@@ -22,23 +50,11 @@ cp .env.example .env
 GCS_BUCKET_URL=gs://your-bucket-name
 ```
 
-### 2. 環境変数を読み込む
+### 5. dbt パッケージのインストール
 
 ```bash
-source .env
+(set -a && source .env && set +a && uv run dbt deps)
 ```
-
-または、毎回自動で読み込みたい場合は `direnv` を使います。
-
-```bash
-# .envrc を作成
-echo "dotenv" > .envrc
-
-# direnv に許可を与える（初回のみ）
-direnv allow
-```
-
-以降はディレクトリに入るだけで自動的に環境変数が読み込まれます。
 
 ## 外部テーブルの作成・更新
 
@@ -47,15 +63,17 @@ direnv allow
 
 ```bash
 # 初回 or 強制再作成
-dbt run-operation stage_external_sources --vars 'ext_full_refresh: true'
+(set -a && source .env && set +a && uv run dbt run-operation stage_external_sources --vars 'ext_full_refresh: true')
 
 # 通常の更新
-dbt run-operation stage_external_sources
+(set -a && source .env && set +a && uv run dbt run-operation stage_external_sources)
 ```
 
 ## 通常の実行
 
 ```bash
-dbt run
-dbt test
+(set -a && source .env && set +a && uv run dbt run)
+(set -a && source .env && set +a && uv run dbt test)
 ```
+
+> `( )` で囲むことで、環境変数が現在のシェルに影響しません。
