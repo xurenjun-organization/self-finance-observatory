@@ -39,19 +39,21 @@ module "service_account" {
 
 # Artifact Registry作成
 module "artifact_registry" {
-  source = "./modules/artifact_registry"
-  project = var.project
-  location = var.region
+  source        = "./modules/artifact_registry"
+  project       = var.project
+  location      = var.region
   repository_id = "dbt-run-job-repo"
 }
 
 # Cloud Run Job作成
 module "run_job" {
-  source = "./modules/run_job"
-  project = var.project
+  source                = "./modules/run_job"
+  project               = var.project
   job_name              = "dbt-run-job"
   location              = var.region
   run_job_image         = "${module.artifact_registry.repository_image_url}/dbt-run-job:latest"
   service_account_email = module.service_account.email
   gcs_bucket_url        = module.gcs.bucket_url
+  bigquery_project      = var.project
+  bigquery_dataset      = "cleaned"
 }

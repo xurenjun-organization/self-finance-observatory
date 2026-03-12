@@ -1,6 +1,7 @@
 resource "google_cloud_run_v2_job" "this" {
-  name     = var.job_name
-  location = var.location
+  name                = var.job_name
+  location            = var.location
+  deletion_protection = false
 
   template {
     template {
@@ -10,10 +11,18 @@ resource "google_cloud_run_v2_job" "this" {
           name  = "GCS_BUCKET_URL"
           value = var.gcs_bucket_url
         }
+        env {
+          name  = "BIGQUERY_PROJECT"
+          value = var.bigquery_project
+        }
+        env {
+          name  = "BIGQUERY_DATASET"
+          value = var.bigquery_dataset
+        }
         resources {
           limits = {
             cpu    = "1"
-            memory = "512Mi"
+            memory = "1Gi"
           }
         }
       }

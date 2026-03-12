@@ -28,3 +28,13 @@ variable "gcs_bucket_url" {
   description = "dbtの外部テーブルが参照するGCSバケットURL（例: gs://bucket-name）"
   type        = string
 }
+
+variable "bigquery_project" {
+  description = "dbtが接続するBigQueryのGCPプロジェクトID"
+  type        = string
+}
+
+variable "bigquery_dataset" {
+  description = "dbtのデフォルト出力先データセット"
+  type        = string
+}
