@@ -7,6 +7,8 @@ self-finance-observatoryのdbtプロジェクトです。
 | 変数名 | 説明 | 例 |
 |---|---|---|
 | `GCS_BUCKET_URL` | 外部テーブルが参照するGCSバケットURL | `gs://your-bucket-name` |
+| `BIGQUERY_PROJECT` | BigQueryのGCPプロジェクトID | `self-finance-observatory` |
+| `BIGQUERY_DATASET` | dbtのデフォルト出力先データセット | `cleaned` |
 
 ## ローカル開発セットアップ
 

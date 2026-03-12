@@ -43,6 +43,27 @@ terraform plan
 terraform apply
 ```
 
+## dbt-run-jobのデプロイ手順
+
+インフラ適用後、以下の手順でイメージをビルド・プッシュしてCloud Run Jobを更新します。
+
+```bash
+# 1. イメージをビルド（linux/amd64 を指定）
+cd dbt-run-job
+docker build --platform linux/amd64 \
+  -t asia-northeast1-docker.pkg.dev/self-finance-observatory/dbt-run-job-repo/dbt-run-job:latest \
+  .
+
+# 2. Artifact Registry に認証（初回のみ）
+gcloud auth configure-docker asia-northeast1-docker.pkg.dev
+
+# 3. プッシュ
+docker push asia-northeast1-docker.pkg.dev/self-finance-observatory/dbt-run-job-repo/dbt-run-job:latest
+
+# 4. Cloud Run Job を実行
+gcloud run jobs execute dbt-run-job --region asia-northeast1 --wait
+```
+
 ## CI（GitHub Actions）での使い方
 
 `backend.tf` はセキュリティのため `.gitignore` に含まれており、CIには存在しません。
