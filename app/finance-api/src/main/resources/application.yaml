@@ -1,3 +1,6 @@
 spring:
   application:
     name: finance-api
+
+bigquery:
+  project-id: self-finance-observatory
