@@ -15,10 +15,10 @@ SELECT
   store_name,
   card_holder,
   payment_method,
-  CAST(amount AS INT64) AS amount,
-  CAST(fee AS INT64) AS fee,
-  CAST(total_amount AS INT64) AS total_amount,
-  CAST(current_month_payment AS INT64) AS current_month_payment
+  SAFE_CAST(NULLIF(amount, '') AS INT64) AS amount,
+  SAFE_CAST(NULLIF(fee, '') AS INT64) AS fee,
+  SAFE_CAST(NULLIF(total_amount, '') AS INT64) AS total_amount,
+  SAFE_CAST(NULLIF(current_month_payment, '') AS INT64) AS current_month_payment
 FROM {{ source('gcs_raw_rakuten', 'gcs_raw_rakuten') }}
 WHERE used_at IS NOT NULL
   AND used_at != ''
