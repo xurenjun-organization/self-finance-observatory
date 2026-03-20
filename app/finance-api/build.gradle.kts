@@ -51,6 +51,8 @@ tasks.compileJava {
 
 dependencies {
 	implementation("org.openapitools:jackson-databind-nullable:0.2.6")
+	implementation("io.swagger.core.v3:swagger-annotations:2.2.22")
+	implementation("jakarta.validation:jakarta.validation-api:3.1.0")
 	implementation("org.springframework.boot:spring-boot-starter-cache")
 	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.springframework.boot:spring-boot-starter-webmvc")
