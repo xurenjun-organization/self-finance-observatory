@@ -1,6 +1,7 @@
 package com.example.finance_api.repository;
 
 import com.example.finance_api.model.Expense;
+import com.example.finance_api.service.CategoryResolver;
 import com.google.cloud.bigquery.BigQuery;
 import com.google.cloud.bigquery.QueryJobConfiguration;
 import com.google.cloud.bigquery.QueryParameterValue;
@@ -19,6 +20,7 @@ import java.util.UUID;
 public class ExpenseRepository {
 
     private final BigQuery bigQuery;
+    private final CategoryResolver categoryResolver;
 
     public List<Expense> findByYearAndMonth(Integer year, Integer month) {
         String query =
@@ -49,16 +51,20 @@ public class ExpenseRepository {
                     expense.setDate(LocalDate.parse(dateStr, DateTimeFormatter.ISO_DATE));
                 }
 
+                String storeName = null;
                 if (row.get("store_name") != null && !row.get("store_name").isNull()) {
-                    expense.setDescription(row.get("store_name").getStringValue());
+                    storeName = row.get("store_name").getStringValue();
                 }
 
                 if (row.get("current_month_payment") != null && !row.get("current_month_payment").isNull()) {
                     expense.setAmount((int) row.get("current_month_payment").getLongValue());
                 }
 
-                // カテゴリ分類は別Issueで実装するため、固定値を設定
-                expense.setCategory("未分類");
+                // カテゴリ分類と正規化名を設定
+                CategoryResolver.ResolveResult resolved = categoryResolver.resolve(storeName);
+                expense.setCategory(resolved.category());
+                // マッチしたキーをdescriptionにセット（地名除去）、未分類の場合は元のstore_nameをそのまま使う
+                expense.setDescription(resolved.normalizedName() != null ? resolved.normalizedName() : storeName);
 
                 expenses.add(expense);
             });
