@@ -1,2 +1,5 @@
 bigquery:
   project-id: test-project
+
+api:
+  key: test-api-key

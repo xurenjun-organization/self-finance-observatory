@@ -4,3 +4,6 @@ spring:
 
 bigquery:
   project-id: ${BIGQUERY_PROJECT_ID}
+
+api:
+  key: ${API_KEY}
