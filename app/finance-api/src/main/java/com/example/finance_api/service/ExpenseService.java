@@ -6,6 +6,7 @@ import com.example.finance_api.model.ExpenseSummaryResponse;
 import com.example.finance_api.model.CategorySummary;
 import com.example.finance_api.repository.ExpenseRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,7 +17,7 @@ public class ExpenseService {
 
     private final ExpenseRepository expenseRepository;
 
-    // TODO: キャッシュ制御は別Issueで実装
+    @Cacheable(value = "expenses", key = "{#year, #month}")
     public ExpenseListResponse getExpenses(Integer year, Integer month) {
         List<Expense> expenses = expenseRepository.findByYearAndMonth(year, month);
 
@@ -31,7 +32,7 @@ public class ExpenseService {
                 .expenses(expenses);
     }
 
-    // TODO: キャッシュ制御は別Issueで実装
+    @Cacheable(value = "expenseSummary", key = "{#year, #month}")
     public ExpenseSummaryResponse getSummary(Integer year, Integer month) {
         List<Expense> expenses = expenseRepository.findByYearAndMonth(year, month);
 
