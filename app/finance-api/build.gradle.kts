@@ -54,7 +54,7 @@ dependencies {
 	implementation("io.swagger.core.v3:swagger-annotations:2.2.22")
 	implementation("jakarta.validation:jakarta.validation-api:3.1.0")
 	implementation("com.google.cloud:google-cloud-bigquery:2.43.0")
-	implementation("org.yaml:snakeyaml:2.3")
+
 	implementation("org.springframework.boot:spring-boot-starter-cache")
 	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.springframework.boot:spring-boot-starter-webmvc")
