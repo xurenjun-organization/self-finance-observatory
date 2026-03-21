@@ -1,0 +1,25 @@
+package com.example.finance_api.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http,
+                                                    ApiKeyAuthFilter apiKeyAuthFilter) throws Exception {
+        http
+            .csrf(csrf -> csrf.disable())
+            .httpBasic(basic -> basic.disable())
+            .formLogin(form -> form.disable())
+            .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
+            .addFilterBefore(apiKeyAuthFilter, UsernamePasswordAuthenticationFilter.class);
+        return http.build();
+    }
+}
