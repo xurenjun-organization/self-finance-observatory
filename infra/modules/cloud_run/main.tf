@@ -32,3 +32,11 @@ resource "google_cloud_run_service" "this" {
     }
   }
 }
+
+resource "google_cloud_run_service_iam_member" "public" {
+  service  = google_cloud_run_service.this.name
+  location = google_cloud_run_service.this.location
+  project  = google_cloud_run_service.this.project
+  role     = "roles/run.invoker"
+  member   = "allUsers"
+}
