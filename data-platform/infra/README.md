@@ -12,6 +12,7 @@ Terraformでself-finance-observatoryのGCPリソースを管理します。
 | `service_account` | Cloud Run Job用サービスアカウント |
 | `artifact_registry` | Dockerイメージ管理リポジトリ |
 | `run_job` | dbt実行用Cloud Run Job |
+| `cloud_run` | finance-api用Cloud Runサービス |
 
 ## 初回セットアップ（Bootstrap手順）
 
@@ -62,6 +63,24 @@ docker push asia-northeast1-docker.pkg.dev/<PROJECT_ID>/dbt-run-job-repo/dbt-run
 
 # 4. Cloud Run Job を実行
 gcloud run jobs execute dbt-run-job --region asia-northeast1 --wait
+```
+
+## finance-apiのデプロイ手順
+
+インフラ適用後、以下の手順でイメージをビルド・プッシュします。
+
+```bash
+# 1. イメージをビルド（linux/amd64 を指定）
+cd app/finance-api
+docker build --platform linux/amd64 \
+  -t asia-northeast1-docker.pkg.dev/$(gcloud config get-value project)/dbt-run-job-repo/finance-api:latest \
+  .
+
+# 2. Artifact Registry に認証（初回のみ）
+gcloud auth configure-docker asia-northeast1-docker.pkg.dev
+
+# 3. プッシュ
+docker push asia-northeast1-docker.pkg.dev/$(gcloud config get-value project)/dbt-run-job-repo/finance-api:latest
 ```
 
 ## CI（GitHub Actions）での使い方
