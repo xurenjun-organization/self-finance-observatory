@@ -10,6 +10,8 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -40,16 +42,23 @@ public class ExpenseService {
                 .mapToInt(Expense::getAmount)
                 .sum();
 
-        // カテゴリ別集計（現在は「未分類」固定のため1件のみ）
-        CategorySummary categorySummary = new CategorySummary()
-                .category("未分類")
-                .amount(total)
-                .percentage(total > 0 ? 100.0f : 0.0f);
+        Map<String, Integer> byCategory = expenses.stream()
+                .collect(Collectors.groupingBy(
+                        Expense::getCategory,
+                        Collectors.summingInt(Expense::getAmount)
+                ));
+
+        List<CategorySummary> categories = byCategory.entrySet().stream()
+                .map(e -> new CategorySummary()
+                        .category(e.getKey())
+                        .amount(e.getValue())
+                        .percentage(total > 0 ? Math.round(e.getValue() * 1000.0f / total) / 10.0f : 0.0f))
+                .toList();
 
         return new ExpenseSummaryResponse()
                 .year(year)
                 .month(month)
                 .total(total)
-                .categories(List.of(categorySummary));
+                .categories(categories);
     }
 }
